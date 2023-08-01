@@ -1,4 +1,5 @@
 import sys, os
+from diffgrad import diffgrad
 
 now_dir = os.getcwd()
 sys.path.append(os.path.join(now_dir))
@@ -153,13 +154,13 @@ def run(rank, n_gpus, hps):
     net_d = MultiPeriodDiscriminator(hps.model.use_spectral_norm)
     if torch.cuda.is_available():
         net_d = net_d.cuda(rank)
-    optim_g = torch.optim.AdamW(
+    optim_g = diffgrad(
         net_g.parameters(),
         hps.train.learning_rate,
         betas=hps.train.betas,
         eps=hps.train.eps,
     )
-    optim_d = torch.optim.AdamW(
+    optim_d = diffgrad(
         net_d.parameters(),
         hps.train.learning_rate,
         betas=hps.train.betas,
